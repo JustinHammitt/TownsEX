@@ -4,8 +4,10 @@ This repository keeps the original released Towns layout: Java source, XML data,
 
 ## Requirements
 
-- JDK 17 or newer is fine for compiling the current source as Java 8 bytecode.
+- JDK 21 is the current project baseline.
 - Gradle 8.x.
+
+Java 25 is the current LTS line as of 2026, but this machine currently has Temurin 17 and 21 installed. Java 26 is a non-LTS feature release, so it is not the best long-lived baseline for this project.
 
 The build pulls the legacy game libraries from public Maven repositories:
 
@@ -13,6 +15,8 @@ The build pulls the legacy game libraries from public Maven repositories:
 - JNA 4.1.0
 - TWL PNGDecoder 1.0
 - Slick Util 1.0.0
+
+The legacy runtime dependencies are older than the new project baseline. Their class files range from Java 1.4 through Java 6 bytecode, and they run on modern JVMs through backwards compatibility. LWJGL 2 remains the main modernization risk because it depends on old native libraries and APIs.
 
 ## Compile
 
@@ -32,11 +36,7 @@ The `run` task uses `src/` as the working directory because the original code lo
 
 The build also extracts LWJGL 2 native libraries into `build/natives/lwjgl` and passes that directory to the JVM.
 
-At the moment, `gradle run` reaches startup but exits when the game tries to load missing original graphics assets, beginning with:
-
-```text
-data/graphics/icon.png
-```
+The original runtime graphics, audio, and font folders are not committed to this source repository. If those folders have been copied locally from an installed Towns release, `gradle run` can launch the game.
 
 ## Check Runtime Assets
 
@@ -46,14 +46,15 @@ gradle checkRuntimeAssets
 
 This prints which expected runtime files/folders are present.
 
-## Current Asset Status
+## Runtime Assets
 
-The source tree currently includes code and data, but not the full runtime asset folders referenced by `towns.ini`:
+The source tree includes code and XML/INI data, but the original release assets should remain local-only and ignored by git:
 
 - `src/data/graphics/`
 - `src/data/audio/`
+- `src/data/fonts/`
 
-That means compilation can work before the game itself is fully runnable.
+Copy those folders from an installed Towns release when you want to run the game locally.
 
 ## Mod Loading Notes
 

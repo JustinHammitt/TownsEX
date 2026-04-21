@@ -6,8 +6,9 @@ group = 'townsex'
 version = '0.1.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 configurations {
@@ -45,6 +46,7 @@ def lwjglNativesDir = layout.buildDirectory.dir('natives/lwjgl')
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+    options.release = 21
 }
 
 tasks.register('copyLwjglNatives', Copy) {
@@ -60,6 +62,9 @@ tasks.register('copyLwjglNatives', Copy) {
 tasks.named('run', JavaExec) {
     dependsOn tasks.named('copyLwjglNatives')
     workingDir = file('src')
+    javaLauncher = javaToolchains.launcherFor {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 
     doFirst {
         def nativePath = lwjglNativesDir.get().asFile.absolutePath

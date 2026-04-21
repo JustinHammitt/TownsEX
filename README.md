@@ -26,6 +26,8 @@ chmod +x gradlew
 
 ```
 
+[Issues? Troubleshooting](#Troubleshooting)
+
 Short term goals:
 
 - Keep JDK 25 builds clean.
@@ -78,11 +80,33 @@ If you build something interesting, feel free to share it on the Discord server.
 
 It's also the place to discuss ideas, mods, and the future of Towns with other contributors.
 
-[[Discord invite link](https://discord.gg/wAW28PkrwF)]
+[Discord invite link](https://discord.gg/wAW28PkrwF)
 
 
+# Troubleshooting
 
+rebuild your dependencies.
+```
+.\gradlew.bat resolveBuildDependencies --refresh-dependencies
+.\gradlew.bat run
+```
 
+This mean's gradle was unable to conneect to the repo and fetch a dependancy(lwjgl:2.9.3).
+Check your VPN, firewall, whaterver. 
+If you can reach your dependency in your browser you should be able to build.
+https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl/lwjgl-platform/2.9.3/
+```
+* What went wrong:
+Could not determine the dependencies of task ':copyLwjglNatives'.
+> Could not resolve all files for configuration ':lwjglNatives'.
+   > Could not resolve org.lwjgl.lwjgl:lwjgl-platform:2.9.3.
+     Required by:
+         root project 'TownsEX'
+      > Could not resolve org.lwjgl.lwjgl:lwjgl-platform:2.9.3.
+         > Could not get resource 'https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl/lwjgl-platform/2.9.3/lwjgl-platform-2.9.3.pom'.
+            > Could not GET 'https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl/lwjgl-platform/2.9.3/lwjgl-platform-2.9.3.pom'.
+               > No such host is known (repo.maven.apache.org)
+```
 
 Thanks to everyone who has been part of this project.
 

@@ -4,6 +4,23 @@ out/
 bin/
 *.class
 
+# Python developer tooling.
+__pycache__/
+*.py[cod]
+*$py.class
+.python-version
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+dist/
+*.egg-info/
+
 # Local runtime assets copied from an installed Towns release.
 /src/data/audio/
 /src/data/fonts/

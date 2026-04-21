@@ -60,6 +60,24 @@ gradle checkRuntimeAssets
 
 This prints which expected runtime files/folders are present.
 
+To search common Steam library locations for an installed Towns release:
+
+```powershell
+gradle findRuntimeAssets
+```
+
+To copy local-only runtime assets from the first detected install:
+
+```powershell
+gradle copyRuntimeAssets
+```
+
+If the install is somewhere custom, pass either the Towns install folder or its `data` folder:
+
+```powershell
+gradle "-Ptowns.assetSource=S:\SteamLibrary\steamapps\common\towns\data" copyRuntimeAssets
+```
+
 ## Runtime Assets
 
 The source tree includes code and XML/INI data, but the original release assets should remain local-only and ignored by git:

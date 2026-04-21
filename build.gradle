@@ -12,6 +12,7 @@ def townsJavaLanguageVersion = townsJavaVersion.map { JavaLanguageVersion.of(it)
 def townsEnableLint = providers.gradleProperty('towns.enableLint')
     .map { it.toBoolean() }
     .orElse(false)
+def runtimeAssetDirs = ['graphics', 'audio', 'fonts']
 
 java {
     toolchain {
@@ -51,6 +52,89 @@ sourceSets {
 }
 
 def lwjglNativesDir = layout.buildDirectory.dir('natives/lwjgl')
+
+def normalizeRuntimeAssetSource = { candidate ->
+    if (candidate == null) {
+        return null
+    }
+
+    def source = candidate instanceof File ? candidate : file(candidate.toString())
+    if (!source.exists()) {
+        return source
+    }
+
+    def dataDir = new File(source, 'data')
+    if (dataDir.isDirectory() && runtimeAssetDirs.every { new File(dataDir, it).isDirectory() }) {
+        return dataDir
+    }
+
+    return source
+}
+
+def readSteamLibraryFolders = { steamRoot ->
+    def libraryFoldersFile = new File(steamRoot, 'steamapps/libraryfolders.vdf')
+    if (!libraryFoldersFile.isFile()) {
+        return []
+    }
+
+    def libraries = [steamRoot]
+    libraryFoldersFile.eachLine { line ->
+        def matcher = line =~ /"path"\s+"([^"]+)"/
+        if (matcher.find()) {
+            libraries << file(matcher.group(1).replace('\\\\', '/'))
+        }
+    }
+    return libraries
+}
+
+def runtimeAssetCandidates = {
+    def candidates = []
+    def addCandidate = { value ->
+        if (value != null && value.toString().trim()) {
+            candidates << normalizeRuntimeAssetSource(value)
+        }
+    }
+
+    addCandidate(providers.gradleProperty('towns.assetSource').orNull)
+    addCandidate(providers.gradleProperty('towns.installDir').orNull)
+    addCandidate(System.getenv('TOWNS_ASSET_SOURCE'))
+    addCandidate(System.getenv('TOWNS_INSTALL_DIR'))
+
+    def steamRoots = [
+        file('C:/Program Files (x86)/Steam'),
+        file('C:/Program Files/Steam')
+    ]
+
+    ('A'..'Z').each { drive ->
+        steamRoots << file("${drive}:/SteamLibrary")
+    }
+
+    steamRoots.findAll { it.isDirectory() }.each { steamRoot ->
+        readSteamLibraryFolders(steamRoot).each { library ->
+            addCandidate(new File(library, 'steamapps/common/Towns'))
+            addCandidate(new File(library, 'steamapps/common/towns'))
+        }
+    }
+
+    return candidates.unique { it.absolutePath.toLowerCase(Locale.ROOT) }
+}
+
+def requiredRuntimeAssetPaths = {
+    [
+        file('src/towns.ini'),
+        file('src/graphics.ini'),
+        file('src/audio.ini'),
+        file('src/data')
+    ] + runtimeAssetDirs.collect { file("src/data/${it}") }
+}
+
+def validRuntimeAssetSource = { source ->
+    source != null && source.isDirectory() && runtimeAssetDirs.every { new File(source, it).isDirectory() }
+}
+
+def resolvedRuntimeAssetSource = {
+    runtimeAssetCandidates().find { validRuntimeAssetSource(it) }
+}
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
@@ -103,17 +187,52 @@ tasks.register('checkRuntimeAssets') {
     description = 'Checks for original Towns runtime asset folders that are not included in this source release.'
 
     doLast {
-        def requiredPaths = [
-            file('src/towns.ini'),
-            file('src/graphics.ini'),
-            file('src/audio.ini'),
-            file('src/data'),
-            file('src/data/graphics'),
-            file('src/data/audio')
-        ]
-
-        requiredPaths.each { path ->
+        requiredRuntimeAssetPaths().each { path ->
             println "${path.exists() ? 'OK     ' : 'MISSING'} ${path}"
         }
+    }
+}
+
+tasks.register('findRuntimeAssets') {
+    group = 'help'
+    description = 'Searches common locations for an installed Towns data folder containing runtime assets.'
+
+    doLast {
+        def candidates = runtimeAssetCandidates()
+        if (candidates.isEmpty()) {
+            println 'No Towns runtime asset candidates were found.'
+        }
+
+        candidates.each { candidate ->
+            println "${validRuntimeAssetSource(candidate) ? 'FOUND  ' : 'SKIP   '} ${candidate}"
+        }
+
+        def source = candidates.find { validRuntimeAssetSource(it) }
+        if (source != null) {
+            println "Use with: gradle \"-Ptowns.assetSource=${source.absolutePath}\" copyRuntimeAssets"
+        } else {
+            println 'Pass an installed Towns folder or data folder with -Ptowns.assetSource=<path>.'
+        }
+    }
+}
+
+tasks.register('copyRuntimeAssets') {
+    group = 'setup'
+    description = 'Copies graphics, audio, and font assets from an installed Towns release into ignored local runtime folders.'
+
+    doLast {
+        def source = resolvedRuntimeAssetSource()
+        if (source == null) {
+            throw new GradleException('Could not find Towns runtime assets. Run findRuntimeAssets, or pass -Ptowns.assetSource=<installed Towns folder or data folder>.')
+        }
+
+        runtimeAssetDirs.each { assetDir ->
+            copy {
+                from new File(source, assetDir)
+                into file("src/data/${assetDir}")
+            }
+        }
+
+        println "Copied Towns runtime assets from ${source}"
     }
 }

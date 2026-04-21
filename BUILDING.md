@@ -72,6 +72,8 @@ Copy those folders from an installed Towns release when you want to run the game
 
 ## Mod Loading Notes
 
+See [`MODDING.md`](MODDING.md) for the current source-level map of mod loading and future tooling ideas.
+
 The game creates a user folder at:
 
 ```text

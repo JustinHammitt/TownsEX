@@ -1,0 +1,101 @@
+plugins {
+    id 'application'
+}
+
+group = 'townsex'
+version = '0.1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+configurations {
+    lwjglNatives
+}
+
+dependencies {
+    implementation 'org.lwjgl.lwjgl:lwjgl:2.9.3'
+    implementation 'net.java.dev.jna:jna:4.1.0'
+    implementation 'org.l33tlabs.twl:pngdecoder:1.0'
+    implementation 'slick-util:slick-util:1.0.0'
+
+    lwjglNatives 'org.lwjgl.lwjgl:lwjgl-platform:2.9.3:natives-windows'
+    lwjglNatives 'org.lwjgl.lwjgl:lwjgl-platform:2.9.3:natives-linux'
+    lwjglNatives 'org.lwjgl.lwjgl:lwjgl-platform:2.9.3:natives-osx'
+}
+
+application {
+    mainClass = 'xaos.Towns'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            srcDirs = ['src']
+            exclude '**/*.java'
+        }
+    }
+}
+
+def lwjglNativesDir = layout.buildDirectory.dir('natives/lwjgl')
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'windows-1252'
+}
+
+tasks.register('copyLwjglNatives', Copy) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    include '**/*.dll', '**/*.so', '**/*.dylib', '**/*.jnilib'
+
+    from {
+        configurations.lwjglNatives.collect { zipTree(it) }
+    }
+    into lwjglNativesDir
+}
+
+tasks.named('run', JavaExec) {
+    dependsOn tasks.named('copyLwjglNatives')
+    workingDir = file('src')
+
+    doFirst {
+        def nativePath = lwjglNativesDir.get().asFile.absolutePath
+        jvmArgs "-Dorg.lwjgl.librarypath=${nativePath}"
+        jvmArgs "-Dnet.java.games.input.librarypath=${nativePath}"
+        jvmArgs "-Djava.library.path=${nativePath}"
+    }
+}
+
+tasks.register('printRuntimeInfo') {
+    group = 'help'
+    description = 'Prints useful runtime paths for this legacy Towns build.'
+
+    doLast {
+        println "Main class: ${application.mainClass.get()}"
+        println "Run working directory: ${file('src').absolutePath}"
+        println "LWJGL native directory: ${lwjglNativesDir.get().asFile.absolutePath}"
+    }
+}
+
+tasks.register('checkRuntimeAssets') {
+    group = 'verification'
+    description = 'Checks for original Towns runtime asset folders that are not included in this source release.'
+
+    doLast {
+        def requiredPaths = [
+            file('src/towns.ini'),
+            file('src/graphics.ini'),
+            file('src/audio.ini'),
+            file('src/data'),
+            file('src/data/graphics'),
+            file('src/data/audio')
+        ]
+
+        requiredPaths.each { path ->
+            println "${path.exists() ? 'OK     ' : 'MISSING'} ${path}"
+        }
+    }
+}

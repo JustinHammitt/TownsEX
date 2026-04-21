@@ -44,7 +44,7 @@ sourceSets {
 def lwjglNativesDir = layout.buildDirectory.dir('natives/lwjgl')
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'windows-1252'
+    options.encoding = 'UTF-8'
 }
 
 tasks.register('copyLwjglNatives', Copy) {

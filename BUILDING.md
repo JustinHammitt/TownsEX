@@ -20,7 +20,7 @@ The build pulls the legacy game libraries from public Maven repositories:
 gradle classes
 ```
 
-The original Java files use Windows-1252-era source encoding, so the Gradle build compiles them with `windows-1252`.
+The Java source files have been normalized to UTF-8, and the Gradle build compiles them with UTF-8 explicitly.
 
 ## Run
 

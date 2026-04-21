@@ -1892,7 +1892,7 @@ public final class World implements Externalizable {
 								// Evitamos la infravisión (teniendo en cuenta que si que hay camino hasta la misma casilla donde está)
 								// if ((x == citizen.getX () && y == citizen.getY ()) || Utils.bresenhamLineExists (citizen.getX (), citizen.getY (), x, y, citizen.getZ (), LivingEntity.TYPE_CITIZEN) || Utils.bresenhamLineExists (x, y, citizen.getX (), citizen.getY (), citizen.getZ (), LivingEntity.TYPE_CITIZEN)) {
 								if ((x == citizen.getX () && y == citizen.getY ()) || Utils.bresenhamLineExists (citizen.getX (), citizen.getY (), x, y, citizen.getZ ()) || Utils.bresenhamLineExists (x, y, citizen.getX (), citizen.getY (), citizen.getZ ())) {
-									alItemsHappy.add (new Integer (imi.getHappiness ()));
+									alItemsHappy.add (Integer.valueOf(imi.getHappiness ()));
 								}
 							}
 						}
@@ -1956,7 +1956,7 @@ public final class World implements Externalizable {
 							iASZID = getCell (getZones ().get (i).getPoints ().get (p)).getAstarZoneID ();
 							if (iASZID != -1) {
 								// Zona libre
-								alASZID.add (new Integer (iASZID));
+								alASZID.add (Integer.valueOf(iASZID));
 								alZonesID.add (zonePersonal.getID ());
 								alZonesPoint.add (Point3DShort.getPoolInstance (getZones ().get (i).getPoints ().get (p)));
 								iQtty--;
@@ -2139,7 +2139,7 @@ public final class World implements Externalizable {
 				if (!bPrerequisitesOK) {
 					if (alLeavingHeroes == null) {
 						alLeavingHeroes = new ArrayList<Integer> ();
-						alLeavingHeroes.add (new Integer (hero.getID ()));
+						alLeavingHeroes.add (Integer.valueOf(hero.getID ()));
 					}
 				}
 			}
@@ -4419,9 +4419,9 @@ public final class World implements Externalizable {
 		HashMap<String, Integer> hmKilled = getEnemiesKilled ();
 		if (hmKilled.containsKey (sIniHeader)) {
 			Integer iCount = hmKilled.remove (sIniHeader);
-			hmKilled.put (sIniHeader, new Integer (iCount.intValue () + 1));
+			hmKilled.put (sIniHeader, Integer.valueOf(iCount.intValue () + 1));
 		} else {
-			hmKilled.put (sIniHeader, new Integer (1));
+			hmKilled.put (sIniHeader, Integer.valueOf(1));
 		}
 	}
 

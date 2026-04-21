@@ -1134,10 +1134,10 @@ public final class TaskManager implements Externalizable {
                         if (iOldGroup != -1) {
                             CitizenGroupData cgd = Game.getWorld().getCitizenGroups().getGroup(iOldGroup);
                             if (cgd != null) {
-                                cgd.getLivingIDs().remove(new Integer(citID));
+                                cgd.getLivingIDs().remove(Integer.valueOf(citID));
                             }
                         } else {
-                            Game.getWorld().getCitizenGroups().getCitizensWithoutGroup().remove(new Integer(citID));
+                            Game.getWorld().getCitizenGroups().getCitizensWithoutGroup().remove(Integer.valueOf(citID));
                         }
 
                         // Tutorial flow
@@ -1147,7 +1147,7 @@ public final class TaskManager implements Externalizable {
                         citizen.getSoldierData().setState(SoldierData.STATE_NOT_A_SOLDIER, -1, citizen.getID());
 
                         // Lo añadimos al job group
-                        Game.getWorld().getCitizenGroups().getCitizensWithoutGroup().add(new Integer(citizen.getID()));
+                        Game.getWorld().getCitizenGroups().getCitizensWithoutGroup().add(Integer.valueOf(citizen.getID()));
                         // Borramos sus jobs
                         citizen.getCitizenData().removeAllDeniedJobs();
                     }
@@ -1383,7 +1383,7 @@ public final class TaskManager implements Externalizable {
             citizen = (Citizen) World.getLivingEntityByID(citizens.get(i));
             if (!citizen.isWaitingForPath() && citizen.isIdle() && citizen.getCarrying() == null && citizen.getCarryingLiving() == null && citizen.getCitizenData().getSleep() > 0) {
                 // Tenemos aldeano sin tarea, miramos la zona A* y lo metemos en la hash
-                Integer iZID = new Integer(World.getCells()[citizen.getX()][citizen.getY()][citizen.getZ()].getAstarZoneID());
+                Integer iZID = Integer.valueOf(World.getCells()[citizen.getX()][citizen.getY()][citizen.getZ()].getAstarZoneID());
                 ArrayList<Citizen> alCitizensSinTarea;
                 if (hmCitizensSinTarea.containsKey(iZID)) {
                     // Obtenemos el Arraylist de la hash
@@ -1790,7 +1790,7 @@ public final class TaskManager implements Externalizable {
                             hPoint3D = hotPoint.getPlaces().get(n);
                             int iASZID = World.getCells()[hPoint3D.x][hPoint3D.y][hPoint3D.z].getAstarZoneID();
                             if (iASZID != -1) {
-                                ArrayList<Citizen> alCitTmp = hmCitizensSinTarea.get(new Integer(iASZID));
+                                ArrayList<Citizen> alCitTmp = hmCitizensSinTarea.get(Integer.valueOf(iASZID));
 
                                 if (alCitTmp != null && alCitTmp.size() > 0 && Citizen.isCellAllowed(hPoint3D.x, hPoint3D.y, hPoint3D.z)) {
                                     iPlacesAccesibles++;
@@ -1835,7 +1835,7 @@ public final class TaskManager implements Externalizable {
                         Point3DShort p3dPlaces;
                         for (int c = 0; c < hotPoint.getPlaces().size(); c++) {
                             p3dPlaces = hotPoint.getPlaces().get(c);
-                            ArrayList<Citizen> alCits = hmCitizensSinTarea.get(new Integer(World.getCells()[p3dPlaces.x][p3dPlaces.y][p3dPlaces.z].getAstarZoneID()));
+                            ArrayList<Citizen> alCits = hmCitizensSinTarea.get(Integer.valueOf(World.getCells()[p3dPlaces.x][p3dPlaces.y][p3dPlaces.z].getAstarZoneID()));
                             if (alCits != null) { // Podría ser que no haya aldeanos en esa zona
                                 for (int v = 0; v < alCits.size(); v++) {
                                     if (!alCitizensSinTarea.contains(alCits.get(v))) {
@@ -1857,7 +1857,7 @@ public final class TaskManager implements Externalizable {
 
                             if (iIndex != -1) {
                                 citizen = alCitizensSinTarea.remove(iIndex);
-                                Integer iZoneID = new Integer(World.getCells()[citizen.getX()][citizen.getY()][citizen.getZ()].getAstarZoneID());
+                                Integer iZoneID = Integer.valueOf(World.getCells()[citizen.getX()][citizen.getY()][citizen.getZ()].getAstarZoneID());
                                 ArrayList<Citizen> alCits = hmCitizensSinTarea.get(iZoneID);
                                 if (alCits != null) {
                                     alCits.remove(citizen);
@@ -2472,7 +2472,7 @@ public final class TaskManager implements Externalizable {
                 Point3DShort p3dEntrance = bmi.getEntranceBaseCoordinates().merge(building.getCoordinates());
                 // Edificio con tareas, primero miramos si hay aldeanos en la zona y después miramos si no se está haciendo por otro aldeano
                 int iBuildinigZoneID = World.getCells()[p3dEntrance.x][p3dEntrance.y][p3dEntrance.z].getAstarZoneID();
-                alCits = hmCitizensSinTarea.get(new Integer(iBuildinigZoneID));
+                alCits = hmCitizensSinTarea.get(Integer.valueOf(iBuildinigZoneID));
 
                 if (alCits == null || alCits.size() == 0) {
                     // No hay aldeanos en la zona, siguiente edificio
@@ -2512,7 +2512,7 @@ public final class TaskManager implements Externalizable {
                     citizen = alCits.remove(iIndexCit);
                     citizen.setCurrentTask(task);
                     iLibres--;
-                    hmCitizensSinTarea.put(new Integer(iBuildinigZoneID), alCits);
+                    hmCitizensSinTarea.put(Integer.valueOf(iBuildinigZoneID), alCits);
 
                     if (iLibres <= 0) {
                         // No más aldeanos libres
@@ -2825,7 +2825,7 @@ public final class TaskManager implements Externalizable {
 
                 // Miramos si hay aldeanos inactivos en el ID del item
                 int iMatZoneID = cell.getAstarZoneID();
-                alCits = hmCitizensSinTarea.get(new Integer(iMatZoneID));
+                alCits = hmCitizensSinTarea.get(Integer.valueOf(iMatZoneID));
                 if (alCits != null && alCits.size() > 0) {
 					// Hay aldeanos inactivos en esa zona, buscamos una stockpile/barril con puntos libres/espacio en esa zona
 
@@ -2898,7 +2898,7 @@ public final class TaskManager implements Externalizable {
                                                 citizen = alCits.remove(iIndexCit);
                                                 citizen.setCurrentTask(task);
                                                 iLibres--;
-                                                hmCitizensSinTarea.put(new Integer(iMatZoneID), alCits);
+                                                hmCitizensSinTarea.put(Integer.valueOf(iMatZoneID), alCits);
                                                 if (iLibres <= 0) {
                                                     // No más aldeanos libres
                                                     break break1; // Fin
@@ -2959,7 +2959,7 @@ public final class TaskManager implements Externalizable {
                                                 citizen = alCits.remove(iIndexCit);
                                                 citizen.setCurrentTask(task);
                                                 iLibres--;
-                                                hmCitizensSinTarea.put(new Integer(iMatZoneID), alCits);
+                                                hmCitizensSinTarea.put(Integer.valueOf(iMatZoneID), alCits);
                                                 if (iLibres <= 0) {
                                                     // No más aldeanos libres
                                                     break break1; // Fin
@@ -3003,7 +3003,7 @@ public final class TaskManager implements Externalizable {
                                                         citizen = alCits.remove(iIndexCit);
                                                         citizen.setCurrentTask(task);
                                                         iLibres--;
-                                                        hmCitizensSinTarea.put(new Integer(iMatZoneID), alCits);
+                                                        hmCitizensSinTarea.put(Integer.valueOf(iMatZoneID), alCits);
                                                         if (iLibres <= 0) {
                                                             // No más aldeanos libres
                                                             break break1; // Fin
@@ -3064,7 +3064,7 @@ public final class TaskManager implements Externalizable {
                                                                         citizen = alCits.remove(iIndexCit);
                                                                         citizen.setCurrentTask(task);
                                                                         iLibres--;
-                                                                        hmCitizensSinTarea.put(new Integer(iMatZoneID), alCits);
+                                                                        hmCitizensSinTarea.put(Integer.valueOf(iMatZoneID), alCits);
                                                                         if (iLibres <= 0) {
                                                                             // No más aldeanos libres
                                                                             break break1; // Fin

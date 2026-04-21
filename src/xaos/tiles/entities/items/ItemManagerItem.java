@@ -301,7 +301,7 @@ public class ItemManagerItem {
         this.habitat = new ArrayList<Integer>();
         for (int i = 0; i < habitat.size(); i++) {
             if (!this.habitat.contains(habitat.get(i))) {
-                //getHabitat ().add (new Integer (TerrainManager.getItem (habitat.get (i)).getTerrainID ()));
+                //getHabitat ().add (Integer.valueOf(TerrainManager.getItem (habitat.get (i)).getTerrainID ()));
                 getHabitat().add(habitat.get(i));
             }
         }
@@ -322,7 +322,7 @@ public class ItemManagerItem {
             if (habitats != null) {
                 for (int i = 0; i < habitats.size(); i++) {
                     if (!this.habitat.contains(habitats.get(i))) {
-                        //getHabitat ().add (new Integer (TerrainManager.getItem (habitats.get (i)).getTerrainID ()));
+                        //getHabitat ().add (Integer.valueOf(TerrainManager.getItem (habitats.get (i)).getTerrainID ()));
                         getHabitat().add(habitats.get(i));
                     }
                 }

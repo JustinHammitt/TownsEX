@@ -91,7 +91,7 @@ public class ItemManager {
                 if (imi.getHabitatAsString() != null) {
                     for (int i = 0; i < imi.getHabitatAsString().size(); i++) {
                         if (!habitat.contains(imi.getHabitatAsString().get(i))) {
-                            habitat.add(new Integer(TerrainManager.getItem(imi.getHabitatAsString().get(i)).getTerrainID()));
+                            habitat.add(Integer.valueOf(TerrainManager.getItem(imi.getHabitatAsString().get(i)).getTerrainID()));
                             //getHabitat ().add (habitat.get (i));
                         }
                     }

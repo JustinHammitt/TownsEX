@@ -385,7 +385,7 @@ public abstract class LivingEntity extends Entity implements Externalizable {
 	 * @param iNumber Cantidad
 	 */
 	public static void setNumLivings (String sIniHeader, int iNumber, boolean bDiscovered) {
-		getMapLivings (bDiscovered).put (sIniHeader, new Integer (iNumber));
+		getMapLivings (bDiscovered).put (sIniHeader, Integer.valueOf(iNumber));
 	}
 
 
@@ -2200,7 +2200,7 @@ public abstract class LivingEntity extends Entity implements Externalizable {
 				if (citizen.getCurrentCustomAction () != null && citizen.getCurrentCustomAction ().getQueueData () != null) {
 					// Pick_living
 					if (citizen.getCurrentCustomAction ().getQueueData ().getLivingIDPick () != -1) {
-						alItemsInUse.add (new Integer (citizen.getCurrentCustomAction ().getQueueData ().getLivingIDPick ()));
+						alItemsInUse.add (Integer.valueOf(citizen.getCurrentCustomAction ().getQueueData ().getLivingIDPick ()));
 					}
 				}
 			}
@@ -2211,7 +2211,7 @@ public abstract class LivingEntity extends Entity implements Externalizable {
 				if (citizen.getCurrentCustomAction () != null && citizen.getCurrentCustomAction ().getQueueData () != null) {
 					// Pick_living
 					if (citizen.getCurrentCustomAction ().getQueueData ().getLivingIDPick () != -1) {
-						alItemsInUse.add (new Integer (citizen.getCurrentCustomAction ().getQueueData ().getLivingIDPick ()));
+						alItemsInUse.add (Integer.valueOf(citizen.getCurrentCustomAction ().getQueueData ().getLivingIDPick ()));
 					}
 				}
 			}

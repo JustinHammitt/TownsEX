@@ -1205,7 +1205,7 @@ public class Item extends Entity implements Externalizable {
 			}
 		}
 		if (bItemOK && alItemsToAvoid != null && alItemsToAvoid.size () > 0) {
-			bItemOK = !alItemsToAvoid.contains (new Integer (entity.getID ()));
+			bItemOK = !alItemsToAvoid.contains (Integer.valueOf(entity.getID ()));
 		}
 
 		return bItemOK;
@@ -1227,11 +1227,11 @@ public class Item extends Entity implements Externalizable {
 				if (citizen.getCurrentCustomAction () != null && citizen.getCurrentCustomAction ().getQueueData () != null) {
 					// Move
 					if (citizen.getCurrentCustomAction ().getQueueData ().getItemIDCurrentPlace () != -1) {
-						alItemsInUse.add (new Integer (citizen.getCurrentCustomAction ().getQueueData ().getItemIDCurrentPlace ()));
+						alItemsInUse.add (Integer.valueOf(citizen.getCurrentCustomAction ().getQueueData ().getItemIDCurrentPlace ()));
 					}
 					// Pick
 					if (citizen.getCurrentCustomAction ().getQueueData ().getItemIDPick () != -1) {
-						alItemsInUse.add (new Integer (citizen.getCurrentCustomAction ().getQueueData ().getItemIDPick ()));
+						alItemsInUse.add (Integer.valueOf(citizen.getCurrentCustomAction ().getQueueData ().getItemIDPick ()));
 					}
 				}
 			}

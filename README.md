@@ -1,5 +1,12 @@
 # Towns Forever Baby!!
 
+Quick start Instructions:
+1. clone  repo
+3. .\gradlew.bat setupRuntimeAssets
+   --- if this fails you'll have to extract the assets from your game manually
+   --- TODO: Asset extraction steps
+4. .\gradlew.bat run
+
 Short term goals:
 - Keep JDK 25 builds clean.
 - Rebuild the developer setup around Gradle.
